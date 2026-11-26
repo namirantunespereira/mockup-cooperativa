@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pesagem de entrada · rascunho</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="app">
+  <div class="faixa">RASCUNHO · dados fictícios, para discussão</div>
+  <main>
+    <div>
+      <div class="rotulo">No galpão da cooperativa</div>
+      <h1>Pesagem de entrada</h1>
+    </div>
+
+    <form id="form" class="cartao" style="display:flex;flex-direction:column;gap:14px" novalidate>
+      <div class="campo">
+        <label for="produtor">Produtor</label>
+        <select id="produtor">
+          <option>Antônio Silva</option>
+          <option>Maria Souza</option>
+          <option>José Pereira</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label for="variedade">Variedade</label>
+        <select id="variedade">
+          <option>Banana-prata</option>
+          <option>Banana-nanica</option>
+        </select>
+      </div>
+      <div class="grade-2">
+        <div class="campo"><label for="extra">Extra (kg)</label><input id="extra" type="number" inputmode="numeric" min="0" value="300"></div>
+        <div class="campo"><label for="primeira">Primeira (kg)</label><input id="primeira" type="number" inputmode="numeric" min="0" value="400"></div>
+      </div>
+      <div class="campo" style="max-width:calc(50% - 6px)"><label for="segunda">Segunda (kg)</label><input id="segunda" type="number" inputmode="numeric" min="0" value="112"></div>
+
+      <div class="total-linha forte" style="margin-top:0">
+        <span>Total</span><span id="total" aria-live="polite">812 kg</span>
+      </div>
+
+      <button class="botao cheio ancho" id="salvar" type="submit">Salvar pesagem</button>
+    </form>
+
+    <div class="confirmado" id="ok" hidden role="status" style="flex-direction:column;align-items:flex-start">
+      <div style="display:flex;gap:8px;align-items:center">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F2A1D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>
+        <span id="msg">Pesagem salva.</span>
+      </div>
+      <span style="font-weight:400;font-size:14px">Já aparece no extrato do produtor.</span>
+      <button class="botao claro" id="proximo" type="button" style="margin-top:6px">Pesar o próximo produtor</button>
+    </div>
+
+    <p style="text-align:center;font-size:13px;margin:4px 0 0"><a href="painel.html" style="font-weight:600">Voltar ao painel da cooperativa</a></p>
+  </main>
+</div>
+<script>
+  var campos = ['extra', 'primeira', 'segunda'].map(function (id) { return document.getElementById(id); });
+  var total = document.getElementById('total');
+  function somar() {
+    var soma = campos.reduce(function (s, c) { return s + (Number(c.value) || 0); }, 0);
+    total.textContent = soma.toLocaleString('pt-BR') + ' kg';
+    return soma;
+  }
+  campos.forEach(function (c) { c.addEventListener('input', somar); });
+  document.getElementById('form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var soma = somar();
+    var quem = document.getElementById('produtor').value;
+    document.getElementById('msg').textContent = 'Salvo: ' + quem + ', ' + soma.toLocaleString('pt-BR') + ' kg.';
+    this.hidden = true;
+    document.getElementById('ok').hidden = false;
+  });
+  document.getElementById('proximo').addEventListener('click', function () {
+    campos.forEach(function (c) { c.value = ''; });
+    somar();
+    document.getElementById('ok').hidden = true;
+    document.getElementById('form').hidden = false;
+    document.getElementById('extra').focus();
+  });
+</script>
+</body>
+</html>

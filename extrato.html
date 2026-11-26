@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Extrato do cooperado · rascunho</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="app">
+  <div class="faixa">RASCUNHO · dados fictícios, para discussão</div>
+  <main>
+    <div>
+      <div class="rotulo">Seu extrato</div>
+      <h1>Entrega de 26 de novembro</h1>
+    </div>
+
+    <section class="cartao" aria-labelledby="pesagem">
+      <h2 id="pesagem" style="margin-bottom:8px">O que foi pesado</h2>
+      <div class="total-linha"><span>Extra</span><span>300 kg</span></div>
+      <div class="total-linha"><span>Primeira</span><span>400 kg</span></div>
+      <div class="total-linha"><span>Segunda</span><span>112 kg</span></div>
+      <div class="total-linha forte"><span>Total</span><span>812 kg</span></div>
+    </section>
+
+    <section class="cartao" aria-labelledby="conta">
+      <h2 id="conta" style="margin-bottom:8px">A conta</h2>
+      <div class="total-linha"><span>812 kg × R$ 1,60 (preço fictício)</span><span>R$ 1.299,20</span></div>
+      <div class="total-linha"><span>Adubo retirado na cooperativa</span><span>− R$ 51,20</span></div>
+      <div class="total-linha forte"><span>A receber</span><span>R$ 1.248,00</span></div>
+      <p class="rotulo" style="margin:8px 0 0;font-size:13px">Acerto previsto para 10 de dezembro.</p>
+    </section>
+
+    <section class="cartao" aria-labelledby="duvida" style="display:flex;flex-direction:column;gap:10px">
+      <h2 id="duvida">Algo não bateu?</h2>
+      <p class="rotulo" style="margin:0">Fale com a cooperativa pelo botão abaixo. A conversa fica registrada junto com esta entrega.</p>
+      <a class="botao borda" href="#" onclick="return false">Chamar a cooperativa</a>
+    </section>
+  </main>
+
+  <nav class="menu-baixo" aria-label="Menu principal">
+    <a href="index.html">
+      <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8v10H3z"/></svg>
+      Início
+    </a>
+    <a href="extrato.html" aria-current="page">
+      <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>
+      Extrato
+    </a>
+  </nav>
+</div>
+</body>
+</html>

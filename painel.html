@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel da cooperativa · rascunho</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="faixa">RASCUNHO · dados fictícios, para discussão</div>
+<div class="pagina">
+
+  <header class="cabecalho">
+    <div>
+      <div class="rotulo">Cooperativa Exemplo</div>
+      <h1>Colheita da semana · 3 e 4 de dezembro</h1>
+    </div>
+    <a class="botao borda" href="pesagem.html">Abrir a pesagem do galpão</a>
+  </header>
+
+  <section class="indicadores" aria-label="Resumo da semana">
+    <div class="cartao indicador"><div class="rotulo">Previsão da semana</div><div class="numero">4.090 kg</div></div>
+    <div class="cartao indicador"><div class="rotulo">Produtores programados</div><div class="numero">6</div></div>
+    <div class="cartao indicador"><div class="rotulo">Confirmaram que está no ponto</div><div class="numero">3 de 6</div></div>
+    <div class="cartao indicador"><div class="rotulo">Caminhões</div><div class="numero">2</div></div>
+  </section>
+
+  <div class="colunas">
+    <section class="principal cartao" aria-labelledby="prog" style="padding:18px 6px 6px">
+      <h2 id="prog" style="padding:0 14px 10px;font-size:18px">Programação de colheita</h2>
+      <div class="tabela-caixa">
+        <table>
+          <thead>
+            <tr><th scope="col">Produtor</th><th scope="col">Dia</th><th scope="col">Previsão</th><th scope="col">Caminhão</th><th scope="col">Situação</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Antônio Silva</td><td>Quinta, 3</td><td>850 kg</td><td>Caminhão 1</td><td><span class="chip">Confirmado</span></td></tr>
+            <tr><td>Maria Souza</td><td>Quinta, 3</td><td>600 kg</td><td>Caminhão 1</td><td><span class="chip">Confirmado</span></td></tr>
+            <tr><td>José Pereira</td><td>Quinta, 3</td><td>720 kg</td><td>Caminhão 1</td><td><span class="chip espera">Aguardando</span></td></tr>
+            <tr><td>Luzia Costa</td><td>Sexta, 4</td><td>540 kg</td><td>Caminhão 2</td><td><span class="chip">Confirmado</span></td></tr>
+            <tr><td>Pedro Lima</td><td>Sexta, 4</td><td>900 kg</td><td>Caminhão 2</td><td><span class="chip espera">Aguardando</span></td></tr>
+            <tr><td>Rita Alves</td><td>Sexta, 4</td><td>480 kg</td><td>Caminhão 2</td><td><span class="chip espera">Aguardando</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <aside class="lateral">
+      <div class="aviso-caixa" role="note">
+        <strong>3 produtores ainda não confirmaram.</strong>
+        <div style="margin-top:4px;font-size:14px">Se a fruta não estiver no ponto, o caminhão pode sair com menos carga.</div>
+      </div>
+      <button class="botao cheio" id="lembrar" type="button">Lembrar os 3 que faltam</button>
+      <div class="confirmado" id="lembrado" hidden role="status">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F2A1D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>
+        Aviso enviado aos 3 produtores.
+      </div>
+      <div class="cartao">
+        <h2 style="margin-bottom:6px">O que o produtor vê</h2>
+        <p class="rotulo" style="margin:0 0 10px;font-size:14px">A mesma programação aparece no celular de cada um, com o dia e a hora do caminhão.</p>
+        <a class="botao borda" href="index.html">Abrir a tela do produtor</a>
+      </div>
+    </aside>
+  </div>
+
+</div>
+<script>
+  document.getElementById('lembrar').addEventListener('click', function () {
+    this.hidden = true;
+    document.getElementById('lembrado').hidden = false;
+  });
+</script>
+</body>
+</html>
