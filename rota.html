@@ -23,13 +23,26 @@
 
     <section class="cartao" aria-label="Andamento">
       <div class="total-linha" style="padding:0"><span><strong id="n">1</strong> de 3 coletadas</span><span><strong id="kg">850</strong> kg a bordo</span></div>
-      <div class="progresso" role="progressbar" aria-valuemin="0" aria-valuemax="3" aria-valuenow="1" aria-label="Paradas concluídas"><div id="barra" style="width:33%"></div></div>
+      <div class="progresso" role="progressbar" aria-valuemin="0" aria-valuemax="3" aria-valuenow="1" aria-label="Paradas coletadas"><div id="barra" style="width:33%"></div></div>
+    </section>
+
+    <section class="cartao mapa-cartao" aria-labelledby="titulo-mapa">
+      <div class="mapa-topo"><h2 id="titulo-mapa">Mapa da rota</h2><span class="relogio" id="relogio">Hora simulada: 6h55</span></div>
+      <div class="mapa-caixa">
+        <svg id="mapa"></svg>
+      </div>
+      <ul class="legenda" aria-label="Legenda do mapa">
+        <li><svg aria-hidden="true" width="28" height="10"><line x1="3" y1="5" x2="25" y2="5" stroke="#A65435" stroke-width="4" stroke-linecap="round"/><circle cx="14" cy="5" r="3" fill="#FCF8F1" stroke="#7F3B22" stroke-width="1.4"/></svg>Caminho feito</li>
+        <li><svg aria-hidden="true" width="28" height="10"><line x1="3" y1="5" x2="25" y2="5" stroke="#A65435" stroke-width="2.6" stroke-dasharray="7 6" stroke-linecap="round" opacity=".75"/></svg>Previsto</li>
+        <li><svg aria-hidden="true" width="14" height="14"><rect x="3" y="3" width="8" height="8" transform="rotate(45 7 7)" fill="#7F3B22"/></svg>Fora do sítio</li>
+      </ul>
+      <p class="nota" style="padding:0 18px 16px">Sem sinal no sítio? O celular guarda o ponto e envia quando o sinal voltar.</p>
     </section>
 
     <section class="cartao" aria-labelledby="paradas">
       <h2 id="paradas" style="margin-bottom:12px">Paradas</h2>
 
-      <div class="parada feita" data-kg="850">
+      <div class="parada feita" data-id="A">
         <div class="num">1</div>
         <div class="info">
           <div class="hora">6h00</div>
@@ -39,7 +52,7 @@
         </div>
       </div>
 
-      <div class="parada" data-kg="600">
+      <div class="parada" data-id="M">
         <div class="num">2</div>
         <div class="info">
           <div class="hora">7h10</div>
@@ -49,7 +62,7 @@
         </div>
       </div>
 
-      <div class="parada" data-kg="720">
+      <div class="parada" data-id="J">
         <div class="num">3</div>
         <div class="info">
           <div class="hora">8h20</div>
@@ -64,30 +77,61 @@
     </section>
 
     <p class="nota" style="text-align:center">Chegada prevista no galpão: 9h30.<br>
-    <a href="painel.html">Ver como a cooperativa acompanha isso</a></p>
+    <a href="mapa.html">Ver como a cooperativa acompanha no mapa</a></p>
   </main>
 </div>
+<script src="mapa.js"></script>
 <script>
-  var n = document.getElementById('n');
-  var kg = document.getElementById('kg');
-  var barra = document.getElementById('barra');
-  function atualizar() {
-    var feitas = document.querySelectorAll('.parada.feita');
-    var peso = 0;
-    feitas.forEach(function (p) { peso += Number(p.dataset.kg); });
-    n.textContent = feitas.length;
-    kg.textContent = peso.toLocaleString('pt-BR');
-    barra.style.width = Math.round(feitas.length / 3 * 100) + '%';
-    barra.parentNode.setAttribute('aria-valuenow', feitas.length);
+  var relogio = document.getElementById('relogio');
+  var mapa = Mapa.criar(document.getElementById('mapa'), {
+    compacto: true,
+    aoMudarHora: function (m) { relogio.textContent = 'Hora simulada: ' + Mapa.hhmm(m); }
+  });
+
+  function resultado(acoes, ev) {
+    acoes.textContent = '';
+    var chip = document.createElement('span');
+    var nota = document.createElement('span');
+    nota.className = 'nota';
+    if (ev.noSitio) {
+      chip.className = 'chip';
+      chip.textContent = 'Coletado';
+      nota.textContent = 'No sítio · ' + ev.distancia + ' m do ponto';
+    } else {
+      chip.className = 'chip espera';
+      chip.textContent = 'Conferir';
+      nota.textContent = 'Registrado a ' + ev.distancia + ' m do sítio. A cooperativa vai conferir.';
+    }
+    acoes.appendChild(chip);
+    acoes.appendChild(nota);
   }
+
+  function atualizar() {
+    var e = mapa.estado();
+    document.getElementById('n').textContent = e.coletadas;
+    document.getElementById('kg').textContent = e.kg.toLocaleString('pt-BR');
+    var barra = document.getElementById('barra');
+    barra.style.width = Math.round(e.coletadas / 3 * 100) + '%';
+    barra.parentNode.setAttribute('aria-valuenow', e.coletadas);
+  }
+
   document.querySelectorAll('.coletar').forEach(function (b) {
     b.addEventListener('click', function () {
       var parada = b.closest('.parada');
-      parada.classList.add('feita');
-      parada.querySelector('.acoes').innerHTML = '<span class="chip">Coletado</span>';
-      atualizar();
+      var id = parada.dataset.id;
+      document.querySelectorAll('.coletar').forEach(function (x) { x.disabled = true; });
+      function fim(ev) {
+        parada.classList.add('feita');
+        resultado(parada.querySelector('.acoes'), ev);
+        atualizar();
+        document.querySelectorAll('.coletar').forEach(function (x) { x.disabled = false; });
+      }
+      if (mapa.proximo() === id) mapa.ir(fim);
+      else mapa.pular(id, fim);
     });
   });
+
+  resultado(document.querySelector('[data-id="A"] .acoes'), mapa.coleta('A'));
   atualizar();
 </script>
 </body>

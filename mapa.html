@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Acompanhamento da coleta · rascunho</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="faixa">Rascunho · dados fictícios, para discussão</div>
+<div class="pagina">
+
+  <header class="cabecalho">
+    <div>
+      <div class="rotulo">Cooperativa Exemplo · Caminhão 1</div>
+      <h1>Coleta de quinta, 3 de dezembro</h1>
+    </div>
+    <a class="botao borda" href="painel.html">Voltar ao painel</a>
+  </header>
+
+  <section class="indicadores" aria-label="Resumo da coleta">
+    <div class="cartao indicador"><div class="rotulo">Paradas coletadas</div><div class="numero" id="ind-coletadas">1 de 3</div></div>
+    <div class="cartao indicador"><div class="rotulo">Peso a bordo</div><div class="numero" id="ind-kg">850 kg</div></div>
+    <div class="cartao indicador"><div class="rotulo">Próxima parada</div><div class="numero" id="ind-proxima">Maria</div></div>
+    <div class="cartao indicador"><div class="rotulo">Coletas a conferir</div><div class="numero" id="ind-conferir">0</div></div>
+  </section>
+
+  <div class="colunas">
+    <section class="principal cartao mapa-cartao" aria-labelledby="titulo-mapa">
+      <div class="mapa-topo">
+        <h2 id="titulo-mapa">Por onde o caminhão passou</h2>
+        <span class="relogio" id="relogio">Hora simulada: 6h55</span>
+        <button class="botao cheio" id="avancar" type="button">Simular a chegada na Maria</button>
+      </div>
+      <div class="mapa-caixa">
+        <svg id="mapa"></svg>
+      </div>
+      <ul class="legenda" aria-label="Legenda do mapa">
+        <li><svg aria-hidden="true" width="28" height="10"><line x1="3" y1="5" x2="25" y2="5" stroke="#A65435" stroke-width="4" stroke-linecap="round"/><circle cx="14" cy="5" r="3" fill="#FCF8F1" stroke="#7F3B22" stroke-width="1.4"/></svg>Caminho feito, com os pontos de GPS</li>
+        <li><svg aria-hidden="true" width="28" height="10"><line x1="3" y1="5" x2="25" y2="5" stroke="#A65435" stroke-width="2.6" stroke-dasharray="7 6" stroke-linecap="round" opacity=".75"/></svg>Caminho previsto</li>
+        <li><svg aria-hidden="true" width="16" height="16"><circle cx="8" cy="8" r="6.5" fill="#F2E0D3" stroke="#C99D84" stroke-width="1.2" stroke-dasharray="3 2"/></svg>Área do sítio (300 m)</li>
+        <li><svg aria-hidden="true" width="14" height="14"><rect x="3" y="3" width="8" height="8" transform="rotate(45 7 7)" fill="#7F3B22"/></svg>Coleta fora do sítio</li>
+      </ul>
+    </section>
+
+    <aside class="lateral">
+      <div class="cartao">
+        <h2>Registro do dia</h2>
+        <ol class="eventos" id="eventos"></ol>
+        <button class="botao borda ancho" id="recomecar" type="button" hidden style="margin-top:12px">Recomeçar a simulação</button>
+      </div>
+      <div class="cartao" style="display:flex;flex-direction:column;gap:8px">
+        <h2>Como funciona a conferência</h2>
+        <p class="rotulo" style="margin:0;font-size:14px">Quando o motorista marca a coleta, o celular guarda a hora e o ponto de GPS. Se o ponto ficar a mais de 300 m do sítio, a coleta aparece aqui para conferir. Às vezes é só a estrada fechada pela chuva, por isso quem decide é a cooperativa.</p>
+      </div>
+      <div class="cartao" style="display:flex;flex-direction:column;gap:10px">
+        <h2>O que o motorista vê</h2>
+        <p class="rotulo" style="margin:0;font-size:14px">As mesmas paradas no celular, com o botão de coleta.</p>
+        <a class="botao borda" href="rota.html">Abrir a rota do motorista</a>
+      </div>
+    </aside>
+  </div>
+
+</div>
+<script src="mapa.js"></script>
+<script>
+  var relogio = document.getElementById('relogio');
+  var svgMapa = document.getElementById('mapa');
+  var mapa = Mapa.criar(svgMapa, {
+    // no celular o mapa inteiro ficaria com letras minúsculas; usa o recorte da rota
+    compacto: svgMapa.getBoundingClientRect().width < 560,
+    aoMudarHora: function (m) { relogio.textContent = 'Hora simulada: ' + Mapa.hhmm(m); }
+  });
+  var lista = document.getElementById('eventos');
+  var botao = document.getElementById('avancar');
+  var recomecar = document.getElementById('recomecar');
+  var textos = { M: 'Simular a chegada na Maria', J: 'Simular a chegada no José', G: 'Simular a volta ao galpão' };
+
+  function criarEl(tag, classe, texto) {
+    var e = document.createElement(tag);
+    if (classe) e.className = classe;
+    if (texto !== undefined) e.textContent = texto;
+    return e;
+  }
+
+  function adicionar(ev) {
+    var li = criarEl('li', 'evento');
+    li.appendChild(criarEl('span', 'hora', Mapa.hhmm(ev.hora)));
+    var corpo = criarEl('div');
+    li.appendChild(corpo);
+    if (ev.tipo === 'saida') {
+      corpo.appendChild(criarEl('strong', '', 'Saiu do galpão'));
+      corpo.appendChild(criarEl('div', 'sub', 'Rota com 3 paradas'));
+    } else if (ev.tipo === 'chegada') {
+      corpo.appendChild(criarEl('strong', '', 'Chegou ao galpão'));
+      corpo.appendChild(criarEl('div', 'sub', ev.kg.toLocaleString('pt-BR') + ' kg para pesar'));
+    } else {
+      corpo.appendChild(criarEl('strong', '', ev.nome));
+      corpo.appendChild(document.createTextNode(' · ' + ev.kg.toLocaleString('pt-BR') + ' kg'));
+      var sub = criarEl('div', 'sub', ev.noSitio
+        ? 'Registrada no sítio, a ' + ev.distancia + ' m do ponto cadastrado'
+        : 'Registrada a ' + ev.distancia + ' m do sítio');
+      corpo.appendChild(sub);
+      var acoes = criarEl('div', 'acoes');
+      li.appendChild(acoes);
+      if (ev.noSitio) {
+        acoes.appendChild(criarEl('span', 'chip', 'No sítio'));
+      } else {
+        var chip = criarEl('span', 'chip espera', 'Conferir');
+        var aceitar = criarEl('button', 'botao borda pequeno', 'Aceitar a coleta');
+        aceitar.type = 'button';
+        aceitar.addEventListener('click', function () {
+          mapa.aceitar(ev.id);
+          chip.className = 'chip';
+          chip.textContent = 'Aceita';
+          sub.textContent += ' · aceita pela cooperativa';
+          aceitar.remove();
+          atualizar();
+        });
+        acoes.appendChild(chip);
+        acoes.appendChild(aceitar);
+      }
+    }
+    lista.appendChild(li);
+  }
+
+  function atualizar() {
+    var e = mapa.estado();
+    document.getElementById('ind-coletadas').textContent = e.coletadas + ' de 3';
+    document.getElementById('ind-kg').textContent = e.kg.toLocaleString('pt-BR') + ' kg';
+    document.getElementById('ind-proxima').textContent = e.fim ? 'Concluída' : (e.proximo === 'G' ? 'Galpão' : Mapa.paradas[e.proximo].curto);
+    document.getElementById('ind-conferir').textContent = e.conferir;
+    if (e.fim) {
+      botao.textContent = 'Rota concluída';
+      botao.disabled = true;
+      recomecar.hidden = false;
+    } else {
+      botao.textContent = textos[e.proximo];
+    }
+  }
+
+  botao.addEventListener('click', function () {
+    botao.disabled = true;
+    mapa.ir(function (ev) {
+      adicionar(ev);
+      botao.disabled = false;
+      atualizar();
+    });
+  });
+  recomecar.addEventListener('click', function () { location.reload(); });
+
+  mapa.eventos().forEach(adicionar);
+  atualizar();
+</script>
+</body>
+</html>

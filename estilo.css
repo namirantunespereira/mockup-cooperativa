@@ -66,7 +66,7 @@ h2 { margin: 0; font-family: var(--serifa); font-size: 20px; font-weight: 400; f
 .destaque {
   background: var(--terracota);
   color: var(--cartao);
-  border-radius: 999px 999px 24px 24px;
+  border-radius: 50% 50% 24px 24px / 120px 120px 24px 24px;
   box-shadow: var(--sombra);
   padding: 44px 24px 24px;
   text-align: center;
@@ -115,7 +115,7 @@ h2 { margin: 0; font-family: var(--serifa); font-size: 20px; font-weight: 400; f
 .botao.claro:hover { background: var(--rosa-claro); }
 .botao.cheio { background: var(--terracota); color: #FFFFFF; }
 .botao.cheio:hover { background: var(--terracota-escuro); }
-.botao.borda { background: transparent; color: var(--terracota-escuro); border-color: var(--terracota); min-height: 44px; font-size: 15px; }
+.botao.borda { background: transparent; color: var(--terracota-escuro); border-color: var(--terracota); min-height: 44px; font-size: 15px; white-space: nowrap; flex-shrink: 0; }
 .botao.borda:hover { background: var(--rosa-claro); }
 .botao.ancho { width: 100%; }
 .destaque .botao { margin-top: 14px; }
@@ -206,8 +206,8 @@ section[aria-labelledby="entregas"] h2 { margin-bottom: 4px; }
 .campo input:focus, .campo select:focus { outline: 3px solid var(--rosa); outline-offset: 0; border-color: var(--terracota); }
 .grade-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 
-.total-linha { display: flex; justify-content: space-between; align-items: baseline; font-size: 16px; padding: 7px 0; }
-.total-linha span:last-child { font-variant-numeric: tabular-nums; }
+.total-linha { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 16px; padding: 7px 0; }
+.total-linha span:last-child { font-variant-numeric: tabular-nums; white-space: nowrap; }
 .total-linha.forte { font-family: var(--serifa); font-size: 22px; border-top: 1px solid var(--taupe); margin-top: 8px; padding-top: 14px; }
 .valor { font-family: var(--serifa); }
 
@@ -264,6 +264,35 @@ tbody tr:last-child td { border-bottom: 0; }
 .lista-saidas .sub { font-size: 13px; color: var(--suave); }
 .lista-saidas .valor-saida { font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 600; }
 td.num-col, th.num-col { text-align: right; }
+
+/* Mapa */
+.mapa-cartao { padding: 0; overflow: hidden; align-self: flex-start; }
+.mapa-topo { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 20px; }
+.mapa-topo .botao { margin-left: auto; }
+.mapa-caixa { background: #F4EBDD; border-top: 1px solid var(--linha); border-bottom: 1px solid var(--linha); }
+.mapa-caixa svg { display: block; width: 100%; height: auto; }
+.relogio {
+  background: var(--rosa-claro); color: var(--terracota-escuro);
+  border-radius: 999px; padding: 4px 12px;
+  font-size: 13px; font-weight: 600; white-space: nowrap;
+}
+@media (max-width: 600px) {
+  table.compacta { min-width: 0; }
+  table.compacta th, table.compacta td { padding: 10px 6px; font-size: 14px; }
+}
+.legenda { list-style: none; margin: 0; padding: 12px 18px 14px; display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--suave); }
+.legenda li { display: flex; align-items: center; gap: 6px; }
+.mapa-pulso { transform-box: fill-box; transform-origin: center; animation: pulso 2.2s ease-out infinite; }
+@keyframes pulso { from { transform: scale(1); opacity: 0.5; } to { transform: scale(2.2); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .mapa-pulso { animation: none; opacity: 0; } }
+.eventos { list-style: none; margin: 10px 0 0; padding: 0; }
+.evento { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 2px 10px; padding: 12px 0; border-bottom: 1px dashed var(--taupe); font-size: 15px; }
+.evento:last-child { border-bottom: 0; }
+.evento .hora { font-family: var(--serifa); font-size: 17px; color: var(--terracota-escuro); line-height: 1.4; }
+.evento .sub { font-size: 13px; color: var(--suave); }
+.evento .acoes { grid-column: 2; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 6px; }
+.botao.pequeno { min-height: 36px; padding: 0 14px; font-size: 14px; }
+.botao:disabled { opacity: 0.55; cursor: default; }
 
 @media (min-width: 700px) {
   .app { box-shadow: 0 0 40px rgba(110, 70, 40, 0.12); }
