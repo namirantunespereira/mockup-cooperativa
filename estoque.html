@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estoque do armazém · rascunho</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="faixa">Rascunho · dados fictícios, para discussão</div>
+<div class="pagina">
+
+  <header class="cabecalho">
+    <div>
+      <div class="rotulo">Cooperativa Exemplo</div>
+      <h1>Estoque do armazém</h1>
+    </div>
+    <a class="botao borda" href="painel.html">Voltar ao painel</a>
+  </header>
+
+  <section class="indicadores" aria-label="Resumo do estoque">
+    <div class="cartao indicador"><div class="rotulo">Itens controlados</div><div class="numero">4</div></div>
+    <div class="cartao indicador"><div class="rotulo">Abaixo do mínimo</div><div class="numero" id="ind-baixo">1</div></div>
+    <div class="cartao indicador"><div class="rotulo">Retiradas na semana</div><div class="numero" id="ind-ret">3</div></div>
+    <div class="cartao indicador"><div class="rotulo">Valor retirado</div><div class="numero" id="ind-valor">R$ 243,60</div></div>
+  </section>
+
+  <div class="colunas">
+    <section class="principal cartao" aria-labelledby="itens" style="padding:22px 8px 8px">
+      <h2 id="itens" style="padding:0 14px 10px">Itens em estoque</h2>
+      <div class="tabela-caixa">
+        <table>
+          <thead>
+            <tr><th scope="col">Item</th><th scope="col" class="num-col">Saldo</th><th scope="col" class="num-col">Mínimo</th><th scope="col">Situação</th></tr>
+          </thead>
+          <tbody>
+            <tr data-item="adubo" data-min="40"><td>Adubo NPK (saco de 50 kg)</td><td class="num-col saldo">38</td><td class="num-col">40</td><td class="situacao"><span class="chip espera">Repor</span></td></tr>
+            <tr data-item="saco" data-min="1500"><td>Saco protetor de cacho (un.)</td><td class="num-col saldo">2.600</td><td class="num-col">1.500</td><td class="situacao"><span class="chip">Ok</span></td></tr>
+            <tr data-item="caixa-plastica" data-min="300"><td>Caixa plástica (un.)</td><td class="num-col saldo">420</td><td class="num-col">300</td><td class="situacao"><span class="chip">Ok</span></td></tr>
+            <tr data-item="caixa-papelao" data-min="800"><td>Caixa de papelão 20 kg (un.)</td><td class="num-col saldo">1.200</td><td class="num-col">800</td><td class="situacao"><span class="chip">Ok</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <aside class="lateral">
+      <div class="aviso-caixa" role="note">
+        <strong>Adubo abaixo do mínimo.</strong>
+        <div style="margin-top:4px;font-size:14px">Restam 38 sacos e o mínimo é 40. Falta pedir ao fornecedor.</div>
+      </div>
+
+      <form class="cartao" id="form" style="display:flex;flex-direction:column;gap:14px" novalidate>
+        <h2>Registrar retirada</h2>
+        <div class="campo">
+          <label for="produtor">Produtor</label>
+          <select id="produtor"><option>Antônio Silva</option><option>Maria Souza</option><option>José Pereira</option></select>
+        </div>
+        <div class="grade-2">
+          <div class="campo">
+            <label for="item">Item</label>
+            <select id="item"><option value="adubo">Adubo (saco)</option><option value="saco">Saco protetor</option></select>
+          </div>
+          <div class="campo">
+            <label for="qtd">Quantidade</label>
+            <input id="qtd" type="number" inputmode="numeric" min="1" value="1">
+          </div>
+        </div>
+        <button class="botao cheio ancho" type="submit">Registrar retirada</button>
+        <div class="confirmado" id="msg" role="status" hidden style="margin-top:0"></div>
+      </form>
+
+      <div class="cartao">
+        <h2>Últimas retiradas</h2>
+        <ul class="lista-saidas" id="saidas">
+          <li><div>Pedro Lima<div class="sub">100 saco protetor · 26 de nov.</div></div><span class="valor-saida">R$ 90,00</span></li>
+          <li><div>Maria Souza<div class="sub">2 adubo · 25 de nov.</div></div><span class="valor-saida">R$ 102,40</span></li>
+          <li><div>Antônio Silva<div class="sub">1 adubo · 24 de nov.</div></div><span class="valor-saida">R$ 51,20</span></li>
+        </ul>
+        <p class="nota" style="margin-top:12px">Cada retirada vira desconto no extrato do produtor, como o adubo do Seu Antônio. <a href="extrato.html">Ver o extrato</a></p>
+        <p class="nota" style="margin-top:6px">Preços fictícios.</p>
+      </div>
+    </aside>
+  </div>
+
+</div>
+<script>
+  var itens = {
+    adubo: { nome: 'adubo', preco: 51.20 },
+    saco: { nome: 'saco protetor', preco: 0.90 }
+  };
+  function brl(v) { return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
+  var retiradas = 3, valorTotal = 243.60;
+  var msg = document.getElementById('msg');
+
+  document.querySelectorAll('tbody tr').forEach(function (l) {
+    var c = l.querySelector('.saldo');
+    c.dataset.v = c.textContent.replace(/\./g, '');
+  });
+
+  function situacao(linha) {
+    var saldo = Number(linha.querySelector('.saldo').dataset.v);
+    linha.querySelector('.situacao').innerHTML = saldo < Number(linha.dataset.min)
+      ? '<span class="chip espera">Repor</span>' : '<span class="chip">Ok</span>';
+  }
+
+  document.getElementById('form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var chave = document.getElementById('item').value;
+    var qtd = Math.floor(Number(document.getElementById('qtd').value));
+    var quem = document.getElementById('produtor').value;
+    var item = itens[chave];
+    var linha = document.querySelector('tr[data-item="' + chave + '"]');
+    var celula = linha.querySelector('.saldo');
+    var saldo = Number(celula.dataset.v);
+    msg.hidden = false;
+    if (!(qtd > 0)) { msg.textContent = 'Informe a quantidade.'; return; }
+    if (qtd > saldo) { msg.textContent = 'Saldo insuficiente: restam ' + saldo.toLocaleString('pt-BR') + '.'; return; }
+    saldo -= qtd;
+    celula.dataset.v = saldo;
+    celula.textContent = saldo.toLocaleString('pt-BR');
+    situacao(linha);
+    var valor = qtd * item.preco;
+    retiradas += 1;
+    valorTotal += valor;
+    document.getElementById('ind-ret').textContent = retiradas;
+    document.getElementById('ind-valor').textContent = brl(valorTotal);
+    document.getElementById('ind-baixo').textContent = document.querySelectorAll('.situacao .espera').length;
+    var li = document.createElement('li');
+    var esq = document.createElement('div');
+    esq.textContent = quem;
+    var sub = document.createElement('div');
+    sub.className = 'sub';
+    sub.textContent = qtd + ' ' + item.nome + ' · hoje';
+    esq.appendChild(sub);
+    var dir = document.createElement('span');
+    dir.className = 'valor-saida';
+    dir.textContent = brl(valor);
+    li.appendChild(esq);
+    li.appendChild(dir);
+    var lista = document.getElementById('saidas');
+    lista.insertBefore(li, lista.firstChild);
+    msg.textContent = 'Retirada registrada. Entra como desconto no extrato de ' + quem + '.';
+  });
+</script>
+</body>
+</html>

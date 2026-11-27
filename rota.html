@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rota do caminhão · rascunho</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="app">
+  <div class="faixa">Rascunho · dados fictícios, para discussão</div>
+  <main>
+    <div>
+      <div class="rotulo">Motorista · Caminhão 1</div>
+      <h1>Rota de quinta, 3 de dezembro</h1>
+    </div>
+
+    <section class="destaque" aria-labelledby="resumo">
+      <div class="titulo-pequeno" id="resumo">Hoje</div>
+      <div class="grande">2.170 kg em 3 paradas</div>
+      <div>Saída do galpão às 5h40</div>
+    </section>
+
+    <section class="cartao" aria-label="Andamento">
+      <div class="total-linha" style="padding:0"><span><strong id="n">1</strong> de 3 coletadas</span><span><strong id="kg">850</strong> kg a bordo</span></div>
+      <div class="progresso" role="progressbar" aria-valuemin="0" aria-valuemax="3" aria-valuenow="1" aria-label="Paradas concluídas"><div id="barra" style="width:33%"></div></div>
+    </section>
+
+    <section class="cartao" aria-labelledby="paradas">
+      <h2 id="paradas" style="margin-bottom:12px">Paradas</h2>
+
+      <div class="parada feita" data-kg="850">
+        <div class="num">1</div>
+        <div class="info">
+          <div class="hora">6h00</div>
+          <div style="font-weight:600">Antônio Silva</div>
+          <div class="nota">850 kg previstos</div>
+          <div class="acoes"><span class="chip">Coletado</span></div>
+        </div>
+      </div>
+
+      <div class="parada" data-kg="600">
+        <div class="num">2</div>
+        <div class="info">
+          <div class="hora">7h10</div>
+          <div style="font-weight:600">Maria Souza</div>
+          <div class="nota">600 kg previstos</div>
+          <div class="acoes"><button class="botao cheio coletar" type="button">Marcar como coletado</button></div>
+        </div>
+      </div>
+
+      <div class="parada" data-kg="720">
+        <div class="num">3</div>
+        <div class="info">
+          <div class="hora">8h20</div>
+          <div style="font-weight:600">José Pereira</div>
+          <div class="nota">720 kg previstos · ainda não confirmou que os cachos estão no ponto</div>
+          <div class="acoes">
+            <a class="botao borda" href="#" onclick="return false">Ligar para o José</a>
+            <button class="botao cheio coletar" type="button">Marcar como coletado</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <p class="nota" style="text-align:center">Chegada prevista no galpão: 9h30.<br>
+    <a href="painel.html">Ver como a cooperativa acompanha isso</a></p>
+  </main>
+</div>
+<script>
+  var n = document.getElementById('n');
+  var kg = document.getElementById('kg');
+  var barra = document.getElementById('barra');
+  function atualizar() {
+    var feitas = document.querySelectorAll('.parada.feita');
+    var peso = 0;
+    feitas.forEach(function (p) { peso += Number(p.dataset.kg); });
+    n.textContent = feitas.length;
+    kg.textContent = peso.toLocaleString('pt-BR');
+    barra.style.width = Math.round(feitas.length / 3 * 100) + '%';
+    barra.parentNode.setAttribute('aria-valuenow', feitas.length);
+  }
+  document.querySelectorAll('.coletar').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var parada = b.closest('.parada');
+      parada.classList.add('feita');
+      parada.querySelector('.acoes').innerHTML = '<span class="chip">Coletado</span>';
+      atualizar();
+    });
+  });
+  atualizar();
+</script>
+</body>
+</html>
